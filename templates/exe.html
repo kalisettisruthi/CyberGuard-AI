@@ -1,0 +1,255 @@
+<!-- templates/exe.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXE Malware Detection - AI Cyber Threat Detection System</title>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/" class="brand-link">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>CyberGuard AI</span>
+                </a>
+            </div>
+            
+            <!-- Mobile Toggle Button -->
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <ul class="nav-links" id="navLinks">
+    <li><a href="/">Home</a></li>
+    <li><a href="/website" class="active">Website Detection</a></li>
+    <li><a href="/exe">EXE Detection</a></li>
+    <li><a href="/about">About</a></li>
+</ul>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header" aria-label="Page header">
+        <div class="container">
+            <div class="page-header-content">
+                <h1 class="page-title">
+                    <i class="fas fa-file-exe"></i> EXE Malware Detection
+                </h1>
+                <p class="page-subtitle">
+                    Upload Windows executable files for static analysis and malware detection using AI.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section class="detection-section" aria-label="EXE file upload">
+        <div class="container">
+            <div class="detection-card">
+                <div class="detection-form">
+                    <div class="form-header">
+                        <i class="fas fa-upload"></i>
+                        <h2>Upload EXE File</h2>
+                    </div>
+                    
+                    <!-- Drag and Drop Area -->
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-content">
+                            <div class="upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <h3>Drag & Drop Your EXE File</h3>
+                            <p>or</p>
+                            <button class="btn btn-secondary browse-btn" id="browseBtn">
+                                <i class="fas fa-folder-open"></i> Browse Files
+                            </button>
+                            <input 
+                                type="file" 
+                                id="fileInput" 
+                                class="file-input" 
+                                accept=".exe"
+                                hidden
+                            >
+                            <div class="upload-restrictions">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Only .exe files are supported (Max size: 100MB)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selected File Card -->
+                    <div class="file-card" id="fileCard" style="display: none;">
+                        <div class="file-card-content">
+                            <div class="file-icon">
+                                <i class="fas fa-file-exe"></i>
+                            </div>
+                            <div class="file-info">
+                                <span class="file-name" id="fileName">example.exe</span>
+                                <span class="file-size" id="fileSize">2.4 MB</span>
+                            </div>
+                            <button class="file-remove" id="removeFileBtn" aria-label="Remove file">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Scan Button -->
+                    <button id="scanBtn" class="btn btn-primary scan-btn" disabled>
+                        <i class="fas fa-shield-halved"></i> Scan File
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading Animation -->
+    <section id="loadingSection" class="loading-section" style="display: none;">
+        <div class="container">
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">
+                    <h3>Scanning EXE File</h3>
+                    <p>Performing static analysis...</p>
+                    <div class="loading-progress">
+                        <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+                    </div>
+                    <span class="progress-text" id="progressText">0%</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="resultsSection" class="results-section" style="display: none;">
+        <div class="container">
+            <div class="result-card">
+                <div class="result-header">
+                    <h2><i class="fas fa-chart-bar"></i> Analysis Results</h2>
+                    <span class="result-badge" id="riskBadge">Risk Level</span>
+                </div>
+
+                <!-- File Summary -->
+                <div class="file-summary">
+                    <div class="file-summary-item">
+                        <i class="fas fa-file-exe"></i>
+                        <span id="resultFileName">example.exe</span>
+                    </div>
+                    <div class="file-summary-item">
+                        <i class="fas fa-weight-hanging"></i>
+                        <span id="resultFileSize">2.4 MB</span>
+                    </div>
+                    <div class="file-summary-item">
+                        <i class="fas fa-hashtag"></i>
+                        <span id="resultSha256">a1b2c3d4e5f6789...</span>
+                    </div>
+                </div>
+
+                <div class="result-grid">
+                    <!-- Prediction -->
+                    <div class="result-item">
+                        <div class="result-label">
+                            <i class="fas fa-robot"></i> Prediction
+                        </div>
+                        <div class="result-value" id="predictionValue">Safe</div>
+                    </div>
+
+                    <!-- Confidence Score -->
+                    <div class="result-item">
+                        <div class="result-label">
+                            <i class="fas fa-percentage"></i> Confidence Score
+                        </div>
+                        <div class="result-value">
+                            <span id="confidenceValue">95</span>%
+                        </div>
+                        <div class="confidence-bar-container">
+                            <div class="confidence-bar" id="confidenceBar" style="width: 95%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Risk Level -->
+                    <div class="result-item">
+                        <div class="result-label">
+                            <i class="fas fa-exclamation-triangle"></i> Risk Level
+                        </div>
+                        <div class="result-value" id="riskLevel">Low Risk</div>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div class="recommendations">
+                    <h3><i class="fas fa-lightbulb"></i> Recommendations</h3>
+                    <p id="recommendationText">The file appears safe. No malicious code detected.</p>
+                    <ul class="recommendation-list" id="recommendationList">
+                        <!-- Dynamic recommendations will be inserted here -->
+                    </ul>
+                </div>
+
+                <!-- Scan Again Button -->
+                <div class="result-actions">
+                    <button id="scanAgainBtn" class="btn btn-secondary">
+                        <i class="fas fa-rotate-right"></i> Scan Another File
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <a href="/" class="brand-link">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>CyberGuard AI</span>
+                </a>
+                <p class="footer-description">
+                    Advanced AI-powered threat detection system for websites and Windows executables.
+                </p>
+                <div class="footer-social">
+                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <div class="footer-links-column">
+                    <h4>Modules</h4>
+                    <ul>
+                        <li><a href="/website">Website Detection</a></li>
+<li><a href="/exe">EXE Detection</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="/about">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 CyberGuard AI. All rights reserved.</p>
+            <p class="footer-credits">Built with <i class="fas fa-heart"></i> for cybersecurity</p>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" class="scroll-top" aria-label="Scroll to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- External JavaScript -->
+    <script src="../static/js/script.js"></script>
+</body>
+</html>

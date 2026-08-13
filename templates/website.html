@@ -1,0 +1,220 @@
+<!-- templates/website.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Threat Detection - AI Cyber Threat Detection System</title>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/" class="brand-link">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>CyberGuard AI</span>
+                </a>
+            </div>
+            
+            <!-- Mobile Toggle Button -->
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+        
+                <li><a href="/">Home</a></li>
+                <li><a href="/website" class="active">Website Detection</a></li>
+                <li><a href="/exe">EXE Detection</a></li>
+                <li><a href="/about">About</a></li>
+</ul>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header" aria-label="Page header">
+        <div class="container">
+            <div class="page-header-content">
+                <h1 class="page-title">
+                    <i class="fas fa-globe"></i> Website Threat Detection
+                </h1>
+                <p class="page-subtitle">
+                    Enter any website URL to analyze its security posture and detect potential threats using AI.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detection Form Section -->
+    <section class="detection-section" aria-label="Website detection form">
+        <div class="container">
+            <div class="detection-card">
+                <div class="detection-form">
+                    <div class="form-header">
+                        <i class="fas fa-search"></i>
+                        <h2>Analyze Website</h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="websiteUrl">
+                            <i class="fas fa-link"></i> Enter Website URL
+                        </label>
+                        <div class="input-group">
+                            <input 
+                                type="url" 
+                                id="websiteUrl" 
+                                class="form-input" 
+                                placeholder="https://example.com"
+                                required
+                            >
+                            <button id="detectBtn" class="btn btn-primary detect-btn">
+                                <i class="fas fa-shield-halved"></i> Detect
+                            </button>
+                        </div>
+                        <small class="form-hint">
+                            <i class="fas fa-info-circle"></i> Enter a valid URL with protocol (http:// or https://)
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading Animation -->
+    <section id="loadingSection" class="loading-section" style="display: none;">
+        <div class="container">
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">
+                    <h3>Analyzing Website</h3>
+                    <p>Scanning for potential threats...</p>
+                    <div class="loading-progress">
+                        <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+                    </div>
+                    <span class="progress-text" id="progressText">0%</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="resultsSection" class="results-section" style="display: none;">
+        <div class="container">
+            <div class="result-card">
+                <div class="result-header">
+                    <h2><i class="fas fa-chart-bar"></i> Detection Results</h2>
+                    <span class="result-badge" id="riskBadge">Risk Level</span>
+                </div>
+
+                <!-- URL Display -->
+                <div class="result-url">
+                    <i class="fas fa-link"></i>
+                    <span id="scannedUrl">https://example.com</span>
+                </div>
+
+                <div class="result-grid">
+                    <!-- Prediction -->
+                    <div class="result-item">
+                        <div class="result-label">
+                            <i class="fas fa-robot"></i> Prediction
+                        </div>
+                        <div class="result-value" id="predictionValue">Safe</div>
+                    </div>
+
+                    <!-- Confidence Score -->
+                    <div class="result-item">
+                        <div class="result-label">
+                            <i class="fas fa-percentage"></i> Confidence Score
+                        </div>
+                        <div class="result-value">
+                            <span id="confidenceValue">95</span>%
+                        </div>
+                        <div class="confidence-bar-container">
+                            <div class="confidence-bar" id="confidenceBar" style="width: 95%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Risk Level -->
+                    <div class="result-item">
+                        <div class="result-label">
+                            <i class="fas fa-exclamation-triangle"></i> Risk Level
+                        </div>
+                        <div class="result-value" id="riskLevel">Low Risk</div>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div class="recommendations">
+                    <h3><i class="fas fa-lightbulb"></i> Recommendations</h3>
+                    <p id="recommendationText">The website appears safe. Continue with normal usage.</p>
+                    <ul class="recommendation-list" id="recommendationList">
+                        <!-- Dynamic recommendations will be inserted here -->
+                    </ul>
+                </div>
+
+                <!-- Scan Again Button -->
+                <div class="result-actions">
+                    <button id="scanAgainBtn" class="btn btn-secondary">
+                        <i class="fas fa-rotate-right"></i> Scan Another URL
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <a href="/" class="brand-link">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>CyberGuard AI</span>
+                </a>
+                <p class="footer-description">
+                    Advanced AI-powered threat detection system for websites and Windows executables.
+                </p>
+                <div class="footer-social">
+                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <div class="footer-links-column">
+                    <h4>Modules</h4>
+                    <ul>
+                       <li><a href="/website">Website Detection</a></li>
+                       <li><a href="/exe">EXE Detection</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="/about">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 CyberGuard AI. All rights reserved.</p>
+            <p class="footer-credits">Built with <i class="fas fa-heart"></i> for cybersecurity</p>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" class="scroll-top" aria-label="Scroll to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- External JavaScript -->
+    <script src="../static/js/script.js"></script>
+</body>
+</html>

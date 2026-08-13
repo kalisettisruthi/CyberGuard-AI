@@ -1,0 +1,278 @@
+<!-- templates// -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Cyber Threat Detection System</title>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/" class="brand-link">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>CyberGuard AI</span>
+                </a>
+            </div>
+            
+            <!-- Mobile Toggle Button -->
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Navigation Links -->
+<ul class="nav-links" id="navLinks">
+    <li><a href="/" class="active">Home</a></li>
+    <li><a href="/website">Website Detection</a></li>
+    <li><a href="/exe">EXE Detection</a></li>
+    <li><a href="/about">About</a></li>
+</ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" aria-label="Hero section">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-robot"></i>
+                AI-Powered Cybersecurity
+            </div>
+            <h1 class="hero-title">
+                Next-Generation <br>
+                <span class="highlight">Threat Detection</span> System
+            </h1>
+            <p class="hero-description">
+                Protect your digital assets with our advanced AI-driven threat detection system.
+                Instantly identify malicious websites and analyze Windows executables for potential threats.
+            </p>
+            <div class="hero-buttons">
+                <a href="/website" class="btn btn-primary">
+                    <i class="fas fa-globe"></i> Check Website
+                </a>
+                <a href="/exe" class="btn btn-secondary">
+                    <i class="fas fa-file-exe"></i> Scan EXE File
+                </a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="floating-icons">
+                <i class="fas fa-shield-halved"></i>
+                <i class="fas fa-code"></i>
+                <i class="fas fa-database"></i>
+                <i class="fas fa-bolt"></i>
+            </div>
+            <div class="hero-image-placeholder">
+                <i class="fas fa-robot"></i>
+                <span>AI Security</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" aria-label="Key features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Why Choose CyberGuard AI?</h2>
+                <p class="section-subtitle">Advanced threat detection powered by machine learning</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI-Powered Detection</h3>
+                    <p>Machine learning models trained on thousands of threats for accurate detection.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Real-Time Analysis</h3>
+                    <p>Instant threat assessment with confidence scores and detailed recommendations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield"></i>
+                    </div>
+                    <h3>Comprehensive Protection</h3>
+                    <p>Detect both website-based threats and malicious Windows executables.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Detailed Reports</h3>
+                    <p>Get comprehensive analysis including risk levels, hashes, and recommendations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modules Section -->
+    <section class="modules" aria-label="Detection modules">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Detection Modules</h2>
+                <p class="section-subtitle">Choose the module that fits your security needs</p>
+            </div>
+            <div class="modules-grid">
+                <!-- Website Detection Card -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <span class="module-badge">Web Security</span>
+                    </div>
+                    <h3>Website Threat Detection</h3>
+                    <p>Analyze any website URL for potential threats, phishing attempts, and malicious content using AI-powered algorithms.</p>
+                    <ul class="module-features">
+                        <li><i class="fas fa-check-circle"></i> URL analysis</li>
+                        <li><i class="fas fa-check-circle"></i> Risk assessment</li>
+                        <li><i class="fas fa-check-circle"></i> Confidence scoring</li>
+                        <li><i class="fas fa-check-circle"></i> Safety recommendations</li>
+                    </ul>
+                    <a href="/website" class="btn btn-primary module-btn">
+                        <i class="fas fa-arrow-right"></i> Start Detection
+                    </a>
+                </div>
+
+                <!-- EXE Detection Card -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-file-exe"></i>
+                        </div>
+                        <span class="module-badge">File Security</span>
+                    </div>
+                    <h3>EXE Malware Detection</h3>
+                    <p>Upload Windows executable files and perform static analysis to detect malware, trojans, and other malicious code.</p>
+                    <ul class="module-features">
+                        <li><i class="fas fa-check-circle"></i> Static analysis</li>
+                        <li><i class="fas fa-check-circle"></i> SHA-256 hashing</li>
+                        <li><i class="fas fa-check-circle"></i> Risk evaluation</li>
+                        <li><i class="fas fa-check-circle"></i> Malware classification</li>
+                    </ul>
+                    <a href="/exe" class="btn btn-primary module-btn">
+                        <i class="fas fa-arrow-right"></i> Upload & Scan
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workflow Section -->
+    <section class="workflow" aria-label="How it works">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-subtitle">Simple, fast, and effective threat detection process</p>
+            </div>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">
+                        <i class="fas fa-upload"></i>
+                    </div>
+                    <h4>Input Data</h4>
+                    <p>Enter a URL or upload a Windows executable file for analysis.</p>
+                </div>
+                <div class="workflow-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h4>AI Analysis</h4>
+                    <p>Our machine learning models process and analyze the input data.</p>
+                </div>
+                <div class="workflow-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h4>Results</h4>
+                    <p>Get instant feedback with risk levels, confidence scores, and recommendations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" aria-label="Call to action">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Secure Your Digital Environment?</h2>
+                <p>Start using CyberGuard AI to detect threats before they cause harm.</p>
+                <div class="cta-buttons">
+                    <a href="/website" class="btn btn-primary btn-large">
+                        <i class="fas fa-shield-alt"></i> Get Started
+                    </a>
+                    <a href="/about" class="btn btn-secondary btn-large">
+                        <i class="fas fa-info-circle"></i> Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <a href="/" class="brand-link">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>CyberGuard AI</span>
+                </a>
+                <p class="footer-description">
+                    Advanced AI-powered threat detection system for websites and Windows executables.
+                </p>
+                <div class="footer-social">
+                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <div class="footer-links-column">
+                    <h4>Modules</h4>
+                    <ul>
+                        <li><a href="/website">Website Detection</a></li>
+                        <li><a href="/exe">EXE Detection</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="/about">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 CyberGuard AI. All rights reserved.</p>
+            <p class="footer-credits">Built with <i class="fas fa-heart"></i> for cybersecurity</p>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" class="scroll-top" aria-label="Scroll to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- External JavaScript -->
+    <script src="../static/js/script.js"></script>
+</body>
+</html>

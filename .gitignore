@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Flask cache and instance folders
+instance/
+*.db
+*.sqlite3
+
+# Virtual environments
+venv/
+.env/
+.env
+env/
+.venv/
+
+# Logs
+logs/
+*.log
+
+# Uploads and datasets
+uploads/
+*.csv
+*.db
+
+# Model artifacts
+ml/models/
+*.pkl
+*.h5
+*.joblib
+*.sav
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS files
+.DS_Store
+Thumbs.db
