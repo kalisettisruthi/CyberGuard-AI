@@ -1,202 +1,140 @@
 # ml/feature_extraction.py
 """
-Feature Extraction Module for AI Cyber Threat Detection System
+Feature extraction for AI Cyber Threat Detection System.
 
-This module extracts features from URLs and PE files for machine learning.
+Two functions:
+  - extract_url_features(url)  -> 10 numeric features from a URL
+  - extract_pe_features(path)  -> 10 numeric features from a PE (EXE) file
+
+No model training. No Flask. Just pure feature extraction.
 """
 
 import re
-import math
-import numpy as np
 from urllib.parse import urlparse
 from pathlib import Path
-from typing import Union
 
-# Try to import pefile
+import numpy as np
+
 try:
     import pefile
-    PEFILE_AVAILABLE = True
+    PEFILE_OK = True
 except ImportError:
-    PEFILE_AVAILABLE = False
-    print("Warning: pefile not installed. EXE features will be limited.")
+    PEFILE_OK = False
 
 
-# ============================================================
-# URL Feature Extraction
-# ============================================================
+# Words often used in phishing URLs
+SUSPICIOUS_WORDS = ["login", "verify", "update", "secure", "account", "bank"]
 
+
+# ------------------------------------------------------------------
+# URL FEATURES  (10 features)
+# ------------------------------------------------------------------
 def extract_url_features(url: str) -> np.ndarray:
-    """
-    Extract 13 features from a URL for phishing detection.
-    
-    Features:
-    1. url_length          - Total URL length
-    2. num_dots            - Number of dots
-    3. num_hyphens         - Number of hyphens
-    4. num_digits          - Number of digits
-    5. num_special_chars   - Number of special characters
-    6. has_https           - 1 if HTTPS, else 0
-    7. is_ip_address       - 1 if IP address, else 0
-    8. num_subdomains      - Number of subdomains
-    9. has_at_symbol       - 1 if @ symbol present
-    10. has_double_slash   - 1 if // appears in path
-    11. is_shortened       - 1 if URL is shortened
-    12. has_suspicious_keyword - 1 if suspicious keyword found
-    13. has_login_keyword  - 1 if login-related keyword found
-    """
+    """Return a 10-value numeric vector describing the given URL."""
     try:
         parsed = urlparse(url)
-        domain = parsed.netloc.lower()
-        path = parsed.path.lower()
-        full_url = url.lower()
-        
-        # Feature dictionary
-        features = {
-            'url_length': len(url),
-            'num_dots': url.count('.'),
-            'num_hyphens': url.count('-'),
-            'num_digits': sum(c.isdigit() for c in url),
-            'num_special_chars': sum(not c.isalnum() for c in url),
-            'has_https': 1 if parsed.scheme == 'https' else 0,
-            'is_ip_address': 1 if is_ip_address(domain) else 0,
-            'num_subdomains': domain.count('.') if domain else 0,
-            'has_at_symbol': 1 if '@' in url else 0,
-            'has_double_slash': 1 if '//' in path else 0,
-            'is_shortened': 1 if any(s in domain for s in ['bit.ly', 'tinyurl.com', 'ow.ly', 'goo.gl']) else 0,
-            'has_suspicious_keyword': 1 if any(kw in full_url for kw in ['login', 'verify', 'secure', 'account', 'update']) else 0,
-            'has_login_keyword': 1 if any(kw in full_url for kw in ['login', 'signin', 'logon', 'sign-in']) else 0
-        }
-        
-        # Return as numpy array in consistent order
-        feature_keys = [
-            'url_length', 'num_dots', 'num_hyphens', 'num_digits', 'num_special_chars',
-            'has_https', 'is_ip_address', 'num_subdomains',
-            'has_at_symbol', 'has_double_slash', 'is_shortened',
-            'has_suspicious_keyword', 'has_login_keyword'
+
+        # 1. total length
+        # 2. number of dots
+        # 3. number of hyphens
+        # 4. number of digits
+        # 5. number of special characters
+        # 6. has https (1/0)
+        # 7. uses IP address as host (1/0)
+        # 8. number of subdomains
+        # 9. number of suspicious keywords
+        # 10. length of the domain
+        features = [
+            len(url),
+            url.count("."),
+            url.count("-"),
+            sum(c.isdigit() for c in url),
+            sum(not c.isalnum() for c in url),
+            1 if parsed.scheme == "https" else 0,
+            1 if _is_ip(parsed.netloc) else 0,
+            parsed.netloc.count("."),
+            sum(w in url.lower() for w in SUSPICIOUS_WORDS),
+            len(parsed.netloc),
         ]
-        
-        return np.array([features[k] for k in feature_keys], dtype=np.float32)
-        
+        return np.array(features, dtype=float)
     except Exception:
-        return np.zeros(13, dtype=np.float32)
+        return np.zeros(10, dtype=float)
 
 
-def is_ip_address(domain: str) -> bool:
-    """Check if domain is an IP address."""
-    try:
-        import ipaddress
-        ipaddress.ip_address(domain.split(':')[0])
-        return True
-    except:
-        return False
+def _is_ip(host: str) -> bool:
+    """True if host looks like an IPv4 address."""
+    host = host.split(":")[0]
+    return bool(re.match(r"^\d{1,3}(\.\d{1,3}){3}$", host))
 
 
-# ============================================================
-# PE (Portable Executable) Feature Extraction
-# ============================================================
-
-def extract_pe_features(file_path: Union[str, Path]) -> np.ndarray:
+# ------------------------------------------------------------------
+# PE / EXE FEATURES  (10 features)
+# ------------------------------------------------------------------
+def extract_pe_features(file_path) -> np.ndarray:
     """
-    Extract 14 features from a PE file for malware detection.
-    
-    Features:
-    1. e_magic              - DOS header magic number
-    2. e_lfanew             - Offset to NT header
-    3. number_of_sections   - Number of sections
-    4. address_of_entry_point - Entry point address
-    5. image_base           - Preferred image base
-    6. size_of_code         - Size of code section
-    7. size_of_image        - Total image size
-    8. size_of_headers      - Size of headers
-    9. checksum             - File checksum
-    10. subsystem           - Subsystem type
-    11. dll_characteristics - DLL flags
-    12. import_count        - Number of imported functions
-    13. file_size           - Total file size in bytes
+    Statically analyse a PE file (never execute it) and return
+    10 numeric features. Returns zeros if the file is not a valid PE.
     """
-    if not PEFILE_AVAILABLE:
-        return np.zeros(14, dtype=np.float32)
-    
-    file_path = Path(file_path)
-    
-    if not file_path.exists():
-        return np.zeros(14, dtype=np.float32)
-    
+    if not PEFILE_OK:
+        return np.zeros(10, dtype=float)
+
+    path = Path(file_path)
+    if not path.exists():
+        return np.zeros(10, dtype=float)
+
     try:
-        pe = pefile.PE(str(file_path))
-        features = {}
-        
-        # DOS Header
-        features['e_magic'] = pe.DOS_HEADER.e_magic
-        features['e_lfanew'] = pe.DOS_HEADER.e_lfanew
-        
-        # File Header
-        features['number_of_sections'] = pe.FILE_HEADER.NumberOfSections
-        
-        # Optional Header
-        if hasattr(pe, 'OPTIONAL_HEADER'):
-            oh = pe.OPTIONAL_HEADER
-            features['address_of_entry_point'] = oh.AddressOfEntryPoint
-            features['image_base'] = oh.ImageBase
-            features['size_of_code'] = oh.SizeOfCode
-            features['size_of_image'] = oh.SizeOfImage
-            features['size_of_headers'] = oh.SizeOfHeaders
-            features['checksum'] = oh.CheckSum
-            features['subsystem'] = oh.Subsystem
-            features['dll_characteristics'] = oh.DllCharacteristics
-        else:
-            for key in ['address_of_entry_point', 'image_base', 'size_of_code', 
-                       'size_of_image', 'size_of_headers', 'checksum', 
-                       'subsystem', 'dll_characteristics']:
-                features[key] = 0
-        
-        # Import count
-        import_count = 0
-        if hasattr(pe, 'DIRECTORY_ENTRY_IMPORT'):
+        pe = pefile.PE(str(path), fast_load=True)
+        pe.parse_data_directories()
+
+        num_sections = pe.FILE_HEADER.NumberOfSections
+        entry_point = pe.OPTIONAL_HEADER.AddressOfEntryPoint
+        image_base = pe.OPTIONAL_HEADER.ImageBase
+        size_of_code = pe.OPTIONAL_HEADER.SizeOfCode
+        size_of_image = pe.OPTIONAL_HEADER.SizeOfImage
+        subsystem = pe.OPTIONAL_HEADER.Subsystem
+
+        # Number of imported functions
+        imports = 0
+        if hasattr(pe, "DIRECTORY_ENTRY_IMPORT"):
             for entry in pe.DIRECTORY_ENTRY_IMPORT:
-                import_count += len(entry.imports)
-        features['import_count'] = import_count
-        
-        # File size
-        features['file_size'] = file_path.stat().st_size
-        
+                imports += len(entry.imports)
+
+        # Average section entropy (unusually high = packed/malicious)
+        entropies = [s.get_entropy() for s in pe.sections] or [0]
+        avg_entropy = sum(entropies) / len(entropies)
+
+        file_size = path.stat().st_size
+
         pe.close()
-        
-        # Return as numpy array
-        feature_keys = [
-            'e_magic', 'e_lfanew', 'number_of_sections',
-            'address_of_entry_point', 'image_base', 'size_of_code',
-            'size_of_image', 'size_of_headers', 'checksum',
-            'subsystem', 'dll_characteristics',
-            'import_count', 'file_size'
-        ]
-        
-        return np.array([features.get(k, 0) for k in feature_keys], dtype=np.float32)
-        
+
+        return np.array(
+            [
+                num_sections,
+                entry_point,
+                image_base,
+                size_of_code,
+                size_of_image,
+                subsystem,
+                imports,
+                avg_entropy,
+                file_size,
+                len(entropies),
+            ],
+            dtype=float,
+        )
     except Exception:
-        return np.zeros(14, dtype=np.float32)
+        return np.zeros(10, dtype=float)
 
 
-# ============================================================
-# Helper Functions
-# ============================================================
+# Feature name lists (helpful for debugging / viva)
+URL_FEATURE_NAMES = [
+    "url_length", "num_dots", "num_hyphens", "num_digits",
+    "num_special", "has_https", "is_ip", "num_subdomains",
+    "suspicious_words", "domain_length",
+]
 
-def get_url_feature_names():
-    """Return list of URL feature names."""
-    return [
-        'url_length', 'num_dots', 'num_hyphens', 'num_digits', 'num_special_chars',
-        'has_https', 'is_ip_address', 'num_subdomains',
-        'has_at_symbol', 'has_double_slash', 'is_shortened',
-        'has_suspicious_keyword', 'has_login_keyword'
-    ]
-
-
-def get_pe_feature_names():
-    """Return list of PE feature names."""
-    return [
-        'e_magic', 'e_lfanew', 'number_of_sections',
-        'address_of_entry_point', 'image_base', 'size_of_code',
-        'size_of_image', 'size_of_headers', 'checksum',
-        'subsystem', 'dll_characteristics',
-        'import_count', 'file_size'
-    ]
+PE_FEATURE_NAMES = [
+    "num_sections", "entry_point", "image_base", "size_of_code",
+    "size_of_image", "subsystem", "num_imports", "avg_entropy",
+    "file_size", "sections_count",
+]
