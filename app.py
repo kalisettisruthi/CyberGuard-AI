@@ -20,6 +20,29 @@ from werkzeug.utils import secure_filename
 
 import config
 from ml.feature_extraction import extract_url_features, extract_pe_features
+from urllib.parse import urlparse
+
+# Trusted domains — ML prediction is overridden for these
+TRUSTED_DOMAINS = {
+    "google.com", "youtube.com", "facebook.com", "instagram.com",
+    "linkedin.com", "twitter.com", "x.com", "reddit.com",
+    "microsoft.com", "apple.com", "amazon.com", "netflix.com",
+    "wikipedia.org", "github.com", "stackoverflow.com",
+    "openai.com", "chatgpt.com", "whatsapp.com", "zoom.us",
+    "gov.in", "nic.in", "gov.uk", "gov",
+}
+
+
+def _is_trusted(url: str) -> bool:
+    """Return True if the URL's host matches a trusted domain (or subdomain)."""
+    try:
+        host = urlparse(url).netloc.lower().split(":")[0]
+        for d in TRUSTED_DOMAINS:
+            if host == d or host.endswith("." + d):
+                return True
+        return False
+    except Exception:
+        return False
 
 # ---------------------------------------------------------------
 # Flask app
@@ -106,6 +129,16 @@ def predict_url():
         if not url:
             return jsonify({"error": "URL is required"}), 400
 
+        # 1) Trusted-domain short-circuit
+        if _is_trusted(url):
+            return jsonify({
+                "prediction": "Safe",
+                "confidence": 100.0,
+                "risk_level": "Low",
+                "recommendation": "Trusted domain. Safe to proceed.",
+            }), 200
+
+        # 2) Otherwise run the ML model
         feats = extract_url_features(url).reshape(1, -1)
         pred = int(website_model.predict(feats)[0])
         conf = float(website_model.predict_proba(feats)[0].max() * 100)
@@ -151,8 +184,9 @@ def predict_exe():
 
         # Features + prediction
         feats = extract_pe_features(tmp_path).reshape(1, -1)
-        if feats.sum() == 0:
-            return jsonify({"error": "File is not a valid PE (.exe)"}), 400
+        print(f"PE features shape: {feats.shape}, values: {feats[0][:7]}")
+        if feats.shape[1] != 7:
+            return jsonify({"error": "Feature extraction returned wrong length"}), 500
 
         pred = int(malware_model.predict(feats)[0])
         conf = float(malware_model.predict_proba(feats)[0].max() * 100)
